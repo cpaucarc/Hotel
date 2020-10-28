@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `hotel` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `hotel`;
 -- MySQL dump 10.13  Distrib 5.6.24, for Win64 (x86_64)
 --
 -- Host: localhost    Database: hotel
@@ -247,17 +245,14 @@ DROP TABLE IF EXISTS `empleados`;
 CREATE TABLE `empleados` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `telefono` int(9) unsigned zerofill DEFAULT NULL,
-  `cargos_id` tinyint(3) unsigned NOT NULL,
-  `personas_id` smallint(5) unsigned NOT NULL,
-  `estado_empleo_id` tinyint(3) unsigned NOT NULL,
+  `cargos_id` tinyint(3) NOT NULL,
+  `personas_id` smallint(5) NOT NULL,
+  `estado_empleo_id` tinyint(3) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_empleados_cargos1_idx` (`cargos_id`),
   KEY `fk_empleados_personas1_idx` (`personas_id`),
-  KEY `fk_empleados_estado_empleo1_idx` (`estado_empleo_id`),
-  CONSTRAINT `fk_empleados_cargos1` FOREIGN KEY (`cargos_id`) REFERENCES `cargos` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_empleados_estado_empleo1` FOREIGN KEY (`estado_empleo_id`) REFERENCES `estado_empleo` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_empleados_personas1` FOREIGN KEY (`personas_id`) REFERENCES `personas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+  KEY `fk_empleados_estado_empleo1_idx` (`estado_empleo_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -266,7 +261,7 @@ CREATE TABLE `empleados` (
 
 LOCK TABLES `empleados` WRITE;
 /*!40000 ALTER TABLE `empleados` DISABLE KEYS */;
-INSERT INTO `empleados` VALUES (1,NULL,1,1,1),(2,963258741,2,2,1),(3,NULL,5,3,1);
+INSERT INTO `empleados` VALUES (1,963258741,1,1,1),(2,963258741,2,2,1),(3,NULL,5,3,1),(4,987452633,3,4,1),(5,978455103,5,5,2);
 /*!40000 ALTER TABLE `empleados` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -301,12 +296,42 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER controlar_periodo_trabajo BEFORE UPDATE ON empleados
+FOR EACH ROW
+BEGIN
+	
+    if (old.estado_empleo_id <> new.estado_empleo_id)   then -- Solo es modificacion de datos personales		
+        if (old.estado_empleo_id = 1 and new.estado_empleo_id = 2 ) then -- Despido			
+            set @idEmpleo = (select id from periodo_trabajo where empleados_id = old.id order by id desc limit 1);
+            update periodo_trabajo set despido = curdate() where id = @idEmpleo;            
+        else 
+			if (old.estado_empleo_id = 2 and new.estado_empleo_id = 1) then -- Recontrato        
+				insert into periodo_trabajo(contratacion, empleados_id) values (curdate(), old.id);
+			end if;        
+        end if;        
+    end if;   		
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
 /*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER des_habilitar_usuario AFTER UPDATE ON empleados
 FOR EACH ROW
 BEGIN
-
-	set @esta_habilitado = (NEW.cargos_id in (select id from cargos where cargo in ('Gerente', 'Recepcionista')));
-	update usuarios set habilitado = @esta_habilitado where empleados_id = old.id;
+	if (NEW.cargos_id <> OLD.cargos_id) then
+		set @esta_habilitado = (NEW.cargos_id in (select id from cargos where cargo in ('Gerente', 'Recepcionista')));
+		update usuarios set habilitado = @esta_habilitado where empleados_id = old.id; 
+    end if;
 		
 END */;;
 DELIMITER ;
@@ -506,7 +531,7 @@ CREATE TABLE `periodo_trabajo` (
   PRIMARY KEY (`id`),
   KEY `fk_periodo_trabajo_empleados1_idx` (`empleados_id`),
   CONSTRAINT `fk_periodo_trabajo_empleados1` FOREIGN KEY (`empleados_id`) REFERENCES `empleados` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -515,7 +540,7 @@ CREATE TABLE `periodo_trabajo` (
 
 LOCK TABLES `periodo_trabajo` WRITE;
 /*!40000 ALTER TABLE `periodo_trabajo` DISABLE KEYS */;
-INSERT INTO `periodo_trabajo` VALUES (1,'2020-09-18',NULL,1),(2,'2020-09-23',NULL,2),(4,'2020-10-12',NULL,3);
+INSERT INTO `periodo_trabajo` VALUES (1,'2020-05-18',NULL,1),(2,'2020-06-23',NULL,2),(4,'2020-08-12',NULL,3),(5,'2020-09-07','2020-10-27',4),(6,'2020-08-17','2020-10-28',5),(7,'2020-10-28',NULL,4);
 /*!40000 ALTER TABLE `periodo_trabajo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -561,7 +586,7 @@ CREATE TABLE `personas` (
   `correo` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `dni_UNIQUE` (`dni`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -570,7 +595,7 @@ CREATE TABLE `personas` (
 
 LOCK TABLES `personas` WRITE;
 /*!40000 ALTER TABLE `personas` DISABLE KEYS */;
-INSERT INTO `personas` VALUES (1,32145698,'Paucar','Colonia','Frank',NULL),(2,40125784,'Melgarejo',NULL,'Jescenia',NULL),(3,41257016,'Pineda','Quispe','Gonzalo','gonzalo@mail.com');
+INSERT INTO `personas` VALUES (1,32145698,'Paucar','Colonia','Frank','fcpaucar@mail.com'),(2,40125784,'Melgarejo',NULL,'Jescenia',NULL),(3,41257016,'Pineda','Quispe','Gonzalo','gonzalo@mail.com'),(4,74125896,'Garcia','Gomes','Ruben','ruben@mail.com'),(5,74187452,'Lima','Duran','Juana','ana@mail.com');
 /*!40000 ALTER TABLE `personas` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -772,9 +797,49 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,'32145698','4b230338cc1174886bf8609cbe292619',1,1),(2,'40125784','bf456601245c0b69cae995e18d555c8a',2,1);
+INSERT INTO `usuarios` VALUES (1,'Paucar','e6edfd58debf021659fc8148cc2196b6',1,1),(2,'Jescenia','e3a696b88d26b186c8d448b649d50691',2,1);
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Temporary view structure for view `v_empleados_activos`
+--
+
+DROP TABLE IF EXISTS `v_empleados_activos`;
+/*!50001 DROP VIEW IF EXISTS `v_empleados_activos`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `v_empleados_activos` AS SELECT 
+ 1 AS `Id`,
+ 1 AS `DNI`,
+ 1 AS `Paterno`,
+ 1 AS `Materno`,
+ 1 AS `Nombres`,
+ 1 AS `Correo`,
+ 1 AS `Telefono`,
+ 1 AS `Cargo`,
+ 1 AS `Sueldo`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `v_empleados_inactivos`
+--
+
+DROP TABLE IF EXISTS `v_empleados_inactivos`;
+/*!50001 DROP VIEW IF EXISTS `v_empleados_inactivos`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `v_empleados_inactivos` AS SELECT 
+ 1 AS `Id`,
+ 1 AS `DNI`,
+ 1 AS `Paterno`,
+ 1 AS `Materno`,
+ 1 AS `Nombres`,
+ 1 AS `Correo`,
+ 1 AS `Telefono`,
+ 1 AS `Cargo`,
+ 1 AS `Sueldo`*/;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Dumping routines for database 'hotel'
@@ -857,7 +922,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_actualizar_empleado`(in _empleado_id smallint, _dni int(8), _ap_pat varchar(45), _ap_mat varchar(45), _nombres varchar(45), _correo varchar(45), _telefono int(9), _cargo varchar(45), _estado_empleo varchar(45))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_actualizar_empleado`(in _empleado_id smallint, _dni int(8), _ap_pat varchar(45), _ap_mat varchar(45), _nombres varchar(45), _correo varchar(45), _telefono int(9), _cargo varchar(45))
 BEGIN
 
 	set @persona_id = (select personas_id from empleados where id = _empleado_id);
@@ -865,7 +930,8 @@ BEGIN
     if (@persona_id is not null) then
 		if (length(_dni) = 8) then
 			update personas set dni = _dni, ap_paterno = _ap_pat, ap_materno = _ap_mat, nombres = _nombres, correo = _correo where id = @persona_id;
-            update empleados set telefono = _telefono, cargos_id = (select id from cargos where cargo = _cargo), personas_id = @persona_id, estado_empleo_id = (select id from estado_empleo where estado = _estado_empleo) where id = _empleado_id;
+            update empleados set telefono = _telefono, cargos_id = (select id from cargos where cargo = _cargo), personas_id = @persona_id where id = _empleado_id;
+            select true codigo, concat_ws(' ', 'Se modifico correctamente los datos de', _ap_pat, _ap_mat, _nombres) mensaje; 
 		else
 			select false codigo, 'El DNI debe tener 8 caracteres' mensaje; 
         end if;
@@ -874,6 +940,92 @@ BEGIN
     end if;
     
 
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_despedir_empleado` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_despedir_empleado`(in _empleado_id smallint)
+BEGIN
+
+	if (select count(*) from empleados where id = _empleado_id) = 1 then
+		update empleados set estado_empleo_id = (select id from estado_empleo where estado = 'Despedido') where id = _empleado_id;
+        select 'El empleado fue despedido' mensaje;
+	else
+        select 'Este empleado no existe' mensaje;
+	end if;
+    
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_modificar_usuario` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_modificar_usuario`(in _usuario varchar(45), _contrasena varchar(45), _empleado_id int)
+BEGIN
+	
+    if (select count(*) from empleados where id = _empleado_id) <> 0 then		
+        if (select count(*) from usuarios where usuario = _usuario) = 0 then        
+			update usuarios set usuario = _usuario, contrasena = md5(_contrasena) where empleados_id = _empleado_id;
+			select true codigo, concat_ws(' ', 'Se modificó con exito los datos de acceso de', 
+				(select 
+					concat_ws(' ',p.ap_paterno, p.ap_materno, p.nombres) 
+                from empleados e join personas p on p.id = e.personas_id
+                where e.id = _empleado_id)) mensaje;
+        else
+			select false codigo, concat_ws(' ', 'El usuario', _usuario, 'ya está registrado') mensaje;
+        end if;
+	else
+		select false codigo, concat_ws(' ', 'Este empleado no esta registrado') mensaje;        
+    end if;
+    
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_recontratar_empleado` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_recontratar_empleado`(in _empleado_id smallint)
+BEGIN
+	
+    if (select count(*) from empleados where id = _empleado_id) = 1 then
+		update empleados set  estado_empleo_id = (select id from estado_empleo where estado = 'Activo') where id = _empleado_id;
+        select 'El empleado fue recontratado' mensaje;
+	else
+        select 'Este empleado no existe' mensaje;
+	end if;
+	
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -936,6 +1088,42 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+
+--
+-- Final view structure for view `v_empleados_activos`
+--
+
+/*!50001 DROP VIEW IF EXISTS `v_empleados_activos`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `v_empleados_activos` AS select `e`.`id` AS `Id`,`p`.`dni` AS `DNI`,`p`.`ap_paterno` AS `Paterno`,`p`.`ap_materno` AS `Materno`,`p`.`nombres` AS `Nombres`,`p`.`correo` AS `Correo`,`e`.`telefono` AS `Telefono`,`c`.`cargo` AS `Cargo`,`c`.`sueldo` AS `Sueldo` from ((`empleados` `e` join `personas` `p` on((`p`.`id` = `e`.`personas_id`))) join `cargos` `c` on((`c`.`id` = `e`.`cargos_id`))) where (`e`.`estado_empleo_id` = 1) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `v_empleados_inactivos`
+--
+
+/*!50001 DROP VIEW IF EXISTS `v_empleados_inactivos`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `v_empleados_inactivos` AS select `e`.`id` AS `Id`,`p`.`dni` AS `DNI`,`p`.`ap_paterno` AS `Paterno`,`p`.`ap_materno` AS `Materno`,`p`.`nombres` AS `Nombres`,`p`.`correo` AS `Correo`,`e`.`telefono` AS `Telefono`,`c`.`cargo` AS `Cargo`,`c`.`sueldo` AS `Sueldo` from ((`empleados` `e` join `personas` `p` on((`p`.`id` = `e`.`personas_id`))) join `cargos` `c` on((`c`.`id` = `e`.`cargos_id`))) where (`e`.`estado_empleo_id` = 2) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -946,4 +1134,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-10-19 10:11:15
+-- Dump completed on 2020-10-28 11:20:43

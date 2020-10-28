@@ -5,9 +5,12 @@
         <group>
             <file>file:/C:/Users/Frank%20Paucar/Documents/NetBeansProjects/Hotel/src/vistas/Principal.java</file>
             <file>file:/C:/Users/Frank%20Paucar/Documents/NetBeansProjects/Hotel/src/vistas/Configuraciones.java</file>
+            <file>file:/C:/Users/Frank%20Paucar/Documents/NetBeansProjects/Hotel/src/vistas/guiEmpleados.java</file>
             <file>file:/C:/Users/Frank%20Paucar/Documents/NetBeansProjects/Hotel/src/hotel/Hotel.java</file>
             <file>file:/C:/Users/Frank%20Paucar/Documents/NetBeansProjects/Hotel/src/vistas/EmpresasRegistradas.java</file>
-            <file>file:/C:/Users/Frank%20Paucar/Documents/NetBeansProjects/Hotel/src/vistas/Login.java</file>
+            <file>file:/C:/Users/Frank%20Paucar/Documents/NetBeansProjects/Hotel/src/modelos/Persona.java</file>
+            <file>file:/C:/Users/Frank%20Paucar/Documents/NetBeansProjects/Hotel/src/modelos/Empleado.java</file>
+            <file>file:/C:/Users/Frank%20Paucar/Documents/NetBeansProjects/Hotel/src/vistas/Dashboard.java</file>
         </group>
     </open-files>
 </project-private>

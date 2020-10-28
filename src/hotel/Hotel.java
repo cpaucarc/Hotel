@@ -6,8 +6,12 @@ import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import vistas.Dashboard;
 import vistas.Principal;
 
 /**
@@ -27,7 +31,7 @@ public class Hotel {
         }
 
         java.awt.EventQueue.invokeLater(() -> {
-            new Principal().setVisible(true);
+            new Dashboard().setVisible(true);
         });
     }
     
