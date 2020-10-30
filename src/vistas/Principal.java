@@ -1145,7 +1145,11 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_lbLogoMouseClicked
 
     private void btElegirEmpresaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btElegirEmpresaActionPerformed
-        new EmpresasRegistradas(this, true).setVisible(true);
+        try {
+            new EmpresasRegistradas(this, true).setVisible(true);
+        } catch (SQLException ex) {
+            System.out.println("No se puede abrir la interfaz Empresas");
+        }
     }//GEN-LAST:event_btElegirEmpresaActionPerformed
     /******************** Fin del evento de clicks de los labels ********************************/
     /**

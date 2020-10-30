@@ -276,8 +276,12 @@ public class Dashboard extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        new guiReservas().setVisible(true);
-        this.dispose();
+        try {
+            new guiReservas().setVisible(true);
+            this.dispose();
+        } catch (SQLException ex) {
+            System.out.println("No se puede abrir la ventana Reservas");
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
@@ -297,7 +301,7 @@ public class Dashboard extends javax.swing.JFrame {
             new guiEmpleados().setVisible(true);
             this.dispose();
         } catch (SQLException ex) {
-            System.out.println("No se puede abrir la ventana empleados");
+            System.out.println("No se puede abrir la ventana Empleados");
         }
     }//GEN-LAST:event_jButton7ActionPerformed
 

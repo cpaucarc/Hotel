@@ -5,11 +5,12 @@ import Component.Tables;
 import Component.TextField;
 import Conexion.Control;
 import Database.Controller;
-import java.awt.Color;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import componentes.Mensajes;
+import componentes.Validador;
 
 /**
  * @author Frank Paucar
@@ -18,7 +19,10 @@ public class guiEmpleados extends javax.swing.JFrame {
 
     private int idEmpleado = 0;
     Controller control = Control.getControl();
-
+    
+    Mensajes msg = new Mensajes();
+    Validador vld = new Validador();
+    
     TableModel mdActivos = new TableModel();
     TableModel mdDespedidos = new TableModel();
 
@@ -30,8 +34,7 @@ public class guiEmpleados extends javax.swing.JFrame {
         Configuracion();
     }
 
-    private final void Configuracion() throws SQLException {
-        setBackground(Color.WHITE);
+    private void Configuracion() throws SQLException {
         setExtendedState(6);
         control.fillCombo(cbCargo, "SELECT * FROM cargos;", 2);
 
@@ -40,7 +43,9 @@ public class guiEmpleados extends javax.swing.JFrame {
         Tables.Light(tbActivos);
         Tables.Light(tbDespedidos);
         Tables.HideColumn(tbActivos, 0);
-        Tables.HideColumn(tbDespedidos, 0);
+        Tables.HideColumn(tbDespedidos, 0);        
+        Tables.setRightAlignmentToColumn(tbActivos, 6);
+        Tables.setRightAlignmentToColumn(tbDespedidos, 6);
 
         try {
             LlenarTablaActivos();
@@ -53,14 +58,14 @@ public class guiEmpleados extends javax.swing.JFrame {
     private void LlenarTablaActivos() throws SQLException {
         control.fillTable(mdActivos, "SELECT Id, DNI, concat_ws(' ', Paterno, Materno, Nombres) Empleado, Correo, Telefono, Cargo, Sueldo "
                 + "FROM v_empleados_activos "
-                + "WHERE Paterno LIKE '"+txBuscarActivo.getText()+"%' or DNI LIKE '"+txBuscarActivo.getText()+"%' or "
-                + "Cargo LIKE '"+txBuscarActivo.getText()+"%';", 7);
+                + "WHERE Paterno LIKE '" + txBuscarActivo.getText() + "%' or DNI LIKE '" + txBuscarActivo.getText() + "%' or "
+                + "Cargo LIKE '" + txBuscarActivo.getText() + "%';", 7);
     }
 
     private void LlenarTablaDespedidos() throws SQLException {
         control.fillTable(mdDespedidos, "SELECT Id, DNI, concat_ws(' ', Paterno, Materno, Nombres) Empleado, Correo, Telefono, Cargo, Sueldo FROM v_empleados_inactivos "
-                + "WHERE Paterno LIKE '"+txBuscarActivo.getText()+"%' or DNI LIKE '"+txBuscarDespedido.getText()+"%' or "
-                + "Cargo LIKE '"+txBuscarDespedido.getText()+"%';", 7);
+                + "WHERE Paterno LIKE '" + txBuscarActivo.getText() + "%' or DNI LIKE '" + txBuscarDespedido.getText() + "%' or "
+                + "Cargo LIKE '" + txBuscarDespedido.getText() + "%';", 7);
     }
 
     private void SeleccionarEmpleado(String id, String[] datosEmpleado) throws SQLException {
@@ -90,15 +95,16 @@ public class guiEmpleados extends javax.swing.JFrame {
         sql += "'" + cbCargo.getSelectedItem().toString() + "');";
 
         String[] rsta = control.getRowData(sql, 2);
+
         if (rsta[0].equals("1")) { //Verdadero
-            JOptionPane.showMessageDialog(null, rsta[1], "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            msg.Exito(rsta[1]);
+            LimpiarCampos();
         } else {
-            JOptionPane.showMessageDialog(null, rsta[1], "Error", JOptionPane.ERROR_MESSAGE);
+            msg.Error(rsta[1]);
         }
     }
 
     private void ActualizarEmpleado() throws SQLException {
-//_nombres varchar(45), _correo varchar(45), _telefono int(9), _cargo varchar(45), _estado_empleo varchar(45))
         String sql = "CALL sp_actualizar_empleado(" + idEmpleado + "," + txDni.getText() + ",'"
                 + txApePaterno.getText() + "','" + txApeMaterno.getText() + "','" + txNombres.getText() + "',";
         if (txCorreo.getText().isEmpty()) {
@@ -116,9 +122,11 @@ public class guiEmpleados extends javax.swing.JFrame {
         String[] rsta = control.getRowData(sql, 2);
 
         if (rsta[0].equals("1")) { //Verdadero
-            JOptionPane.showMessageDialog(null, rsta[1], "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            msg.Exito(rsta[1]);
+            idEmpleado = 0;
+            LimpiarCampos();
         } else {
-            JOptionPane.showMessageDialog(null, rsta[1], "Error", JOptionPane.ERROR_MESSAGE);
+            msg.Error(rsta[1]);
         }
     }
 
@@ -131,37 +139,37 @@ public class guiEmpleados extends javax.swing.JFrame {
         txCorreo.setText(null);
         cbCargo.setSelectedIndex(0);
     }
-
+    
     private boolean CamposLlenos() {
-        if (txDni.getText().length() == 8) {
-            if (!txApePaterno.getText().isEmpty()) {
-                if (!txApeMaterno.getText().isEmpty()) {
-                    if (!txNombres.getText().isEmpty()) {
-                        if (cbCargo.getSelectedIndex() > 0) {
+        if (vld.validarCampoConLongitud(txDni, 8)) {
+            if (vld.validarCampo(txApePaterno)) {
+                if (vld.validarCampo(txApeMaterno)) {
+                    if (vld.validarCampo(txNombres)) {
+                        if (vld.validarCombo(cbCargo)) {
                             return true;
                         } else {
                             cbCargo.grabFocus();
-                            JOptionPane.showMessageDialog(null, "El campo Cargo es obligatorio", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                            msg.Advertencia("El campo Cargo es obligatorio");
                             return false;
                         }
                     } else {
                         txNombres.grabFocus();
-                        JOptionPane.showMessageDialog(null, "El campo Nombres es obligatorio", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                        msg.Advertencia("El campo Nombres es obligatorio");
                         return false;
                     }
                 } else {
                     txApeMaterno.grabFocus();
-                    JOptionPane.showMessageDialog(null, "El campo Apellido Materno es obligatorio", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                    msg.Advertencia("El campo Apellido Materno es obligatorio");
                     return false;
                 }
             } else {
                 txApePaterno.grabFocus();
-                JOptionPane.showMessageDialog(null, "El campo Apellido Paterno es obligatorio", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                msg.Advertencia("El campo Apellido Paterno es obligatorio");
                 return false;
             }
         } else {
             txDni.grabFocus();
-            JOptionPane.showMessageDialog(null, "El campo DNI es obligatorio", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            msg.Advertencia("El campo DNI es obligatorio");
             return false;
         }
     }
@@ -169,34 +177,29 @@ public class guiEmpleados extends javax.swing.JFrame {
     private void DespedirEmpleado() throws SQLException {
         if (idEmpleado != 0) {
             String nomEmpleado = control.getData("SELECT concat_ws(' ', Paterno, Materno, Nombres) Empleado FROM v_empleados_activos where id = " + idEmpleado + ";", 1);
-            int resp = JOptionPane.showConfirmDialog(null, "¿Quieres despedir a " + nomEmpleado + "?", "Advertencia", JOptionPane.YES_NO_OPTION);
+            int resp = msg.Pregunta("¿Quieres despedir a " + nomEmpleado + "?");
             if (resp == 0) {
-                String mensaje = control.getData("CALL sp_despedir_empleado(" + idEmpleado+")", 1);
+                String mensaje = control.getData("CALL sp_despedir_empleado(" + idEmpleado + ")", 1);
                 System.out.println(mensaje);
             }
         } else {
-            JOptionPane.showMessageDialog(null, "No ha seleccionado ningun elemento");
+            msg.Advertencia("No ha seleccionado ningun elemento");
         }
     }
 
     private void RecontratarEmpleado() throws SQLException {
         if (idEmpleado != 0) {
             String nomEmpleado = control.getData("SELECT concat_ws(' ', Paterno, Materno, Nombres) Empleado FROM v_empleados_inactivos where id = " + idEmpleado + ";", 1);
-            int resp = JOptionPane.showConfirmDialog(null, "¿Quieres despedir a " + nomEmpleado + "?", "Advertencia", JOptionPane.YES_NO_OPTION);
+            int resp = msg.Pregunta("¿Quieres recontratar a " + nomEmpleado + "?");
             if (resp == 0) {
-                String mensaje = control.getData("CALL sp_recontratar_empleado(" + idEmpleado+")", 1);
+                String mensaje = control.getData("CALL sp_recontratar_empleado(" + idEmpleado + ")", 1);
                 System.out.println(mensaje);
             }
         } else {
-            JOptionPane.showMessageDialog(null, "No ha seleccionado ningun elemento");
+            msg.Advertencia("No ha seleccionado ningun elemento");
         }
     }
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -550,15 +553,12 @@ public class guiEmpleados extends javax.swing.JFrame {
             if (idEmpleado == 0) {
                 try {
                     RegistrarEmpleado();
-                    LimpiarCampos();
                 } catch (SQLException ex) {
                     System.out.println("Hubo un error al registrar al empleado \n" + ex);
                 }
             } else {
                 try {
                     ActualizarEmpleado();
-                    idEmpleado = 0;
-                    LimpiarCampos();
                 } catch (SQLException ex) {
                     System.out.println("Hubo un error al actualizar al empleado \n" + ex);
                 }
@@ -579,7 +579,7 @@ public class guiEmpleados extends javax.swing.JFrame {
             String[] datosEmpleado = control.getRowData("SELECT * FROM v_empleados_inactivos WHERE Id = " + id + ";", 9);
             SeleccionarEmpleado(id, datosEmpleado);
         } catch (SQLException ex) {
-            System.out.println("No se puede capturar el id del empleado \n" + ex);
+            System.out.println("No se puede capturar el id del empleado despedido\n" + ex);
         }
     }//GEN-LAST:event_tbDespedidosMouseClicked
 
@@ -589,7 +589,7 @@ public class guiEmpleados extends javax.swing.JFrame {
             String[] datosEmpleado = control.getRowData("SELECT * FROM v_empleados_activos WHERE Id = " + id + ";", 9);
             SeleccionarEmpleado(id, datosEmpleado);
         } catch (SQLException ex) {
-            System.out.println("No se puede capturar el id del empleado \n" + ex);
+            System.out.println("No se puede capturar el id del empleado activo\n" + ex);
         }
     }//GEN-LAST:event_tbActivosMouseClicked
 
@@ -600,6 +600,7 @@ public class guiEmpleados extends javax.swing.JFrame {
     private void miDespedirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miDespedirActionPerformed
         try {
             DespedirEmpleado();
+            LimpiarCampos();
             LlenarTablaActivos();
             LlenarTablaDespedidos();
         } catch (SQLException ex) {
@@ -610,6 +611,7 @@ public class guiEmpleados extends javax.swing.JFrame {
     private void miContratarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miContratarActionPerformed
         try {
             RecontratarEmpleado();
+            LimpiarCampos();
             LlenarTablaActivos();
             LlenarTablaDespedidos();
         } catch (SQLException ex) {
@@ -675,27 +677,16 @@ public class guiEmpleados extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(guiEmpleados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(guiEmpleados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(guiEmpleados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(guiEmpleados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
+            System.out.println("Error al asignar el LAF.");
         }
         //</editor-fold>
-        //</editor-fold>
-
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    new guiEmpleados().setVisible(true);
-                } catch (SQLException ex) {
-                    Logger.getLogger(guiEmpleados.class.getName()).log(Level.SEVERE, null, ex);
-                }
+        java.awt.EventQueue.invokeLater(() -> {
+            try {
+                new guiEmpleados().setVisible(true);
+            } catch (SQLException ex) {
+                System.out.println("No se puede abrir el interfaz Empleados");
             }
         });
     }

@@ -1,20 +1,64 @@
 package vistas;
 
 import Component.Tables;
-import javax.swing.JOptionPane;
+import Conexion.Control;
+import Database.Controller;
+import componentes.Mensajes;
+import componentes.Validador;
+import java.sql.SQLException;
 
 public class guiReservas extends javax.swing.JFrame {
 
-    public guiReservas() {
+    Mensajes msg = new Mensajes();
+    Validador vld = new Validador();
+    Controller control = Control.getControl();
+    public static int idEmpresa = 0;
+    private int idReserva = 0;
+
+    public guiReservas() throws SQLException {
         initComponents();
         Configuraciones();
     }
-        
-    private void Configuraciones(){
+
+    private void Configuraciones() throws SQLException {
         setExtendedState(6);
-        Tables.Dark(tbReservas);
+        Tables.Light(tbReservas);
+        control.fillCombo(cbTipoHab, "SELECT tipo_hab FROM tipo_hab;", 1);
     }
 
+    private boolean camposLlenos() {
+        if (vld.validarCampo(txApePaterno)) {
+            if (vld.validarCampo(txNombres)) {
+                if (vld.validarCampo(txNombres)) {
+                    if (vld.validarFechas(dcEntrada.getDate(), dcSalida.getDate())) {
+                        return true;
+                    } else {
+                        txNombres.grabFocus();
+                        msg.Advertencia("Falta las fechas de Entrada y Salida");
+                        return false;
+                    }
+                } else {
+                    txNombres.grabFocus();
+                    msg.Advertencia("El campo Nombres es obligatorio");
+                    return false;
+                }
+            } else {
+                txNombres.grabFocus();
+                msg.Advertencia("El campo Nombres es obligatorio");
+                return false;
+            }
+        } else {
+            txApePaterno.grabFocus();
+            msg.Advertencia("El campo Apellido Paterno es obligatorio");
+            return false;
+        }
+    }
+
+    private void buscarHabsDisponibles() throws SQLException{
+        //ToDo
+        control.fillCombo(cbHabDisponibles, "CALL sp_hab_disponibles('"+cbTipoHab.getSelectedItem().toString()+"', '2020-10-29', '2020-10-31');", 1);
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -47,6 +91,7 @@ public class guiReservas extends javax.swing.JFrame {
         jLabel52 = new javax.swing.JLabel();
         cbHabDisponibles = new javax.swing.JComboBox<>();
         cbTipoHab = new javax.swing.JComboBox<>();
+        jButton1 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         txBuscarReserva = new javax.swing.JTextField();
@@ -168,10 +213,11 @@ public class guiReservas extends javax.swing.JFrame {
         jLabel50.setText("Hab. disponibles");
         jPanel4.add(jLabel50, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 610, -1, 25));
 
-        dcSalida.setDateFormatString("yyyy-MM-dd");
+        dcSalida.setDateFormatString("d MMM, yyyy");
         dcSalida.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         jPanel4.add(dcSalida, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 495, 150, 25));
 
+        dcEntrada.setDateFormatString("d MMM, yyyy");
         dcEntrada.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         jPanel4.add(dcEntrada, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 455, 150, 25));
 
@@ -192,13 +238,25 @@ public class guiReservas extends javax.swing.JFrame {
 
         cbHabDisponibles.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         cbHabDisponibles.setForeground(new java.awt.Color(75, 88, 118));
-        cbHabDisponibles.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbHabDisponibles.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                cbHabDisponiblesFocusGained(evt);
+            }
+        });
         jPanel4.add(cbHabDisponibles, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 610, 150, 25));
 
         cbTipoHab.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         cbTipoHab.setForeground(new java.awt.Color(75, 88, 118));
         cbTipoHab.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jPanel4.add(cbTipoHab, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 570, 150, 25));
+
+        jButton1.setText("jButton1");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        jPanel4.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 670, -1, -1));
 
         jScrollPane1.setViewportView(jPanel4);
 
@@ -267,7 +325,11 @@ public class guiReservas extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btElegirEmpresaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btElegirEmpresaActionPerformed
-        new EmpresasRegistradas(this, true).setVisible(true);
+        try {
+            new EmpresasRegistradas(this, true).setVisible(true);
+        } catch (SQLException ex) {
+            System.out.println("No se puede abrir la ventana");
+        }
     }//GEN-LAST:event_btElegirEmpresaActionPerformed
 
     private void txBuscarReservaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txBuscarReservaKeyTyped
@@ -281,6 +343,41 @@ public class guiReservas extends javax.swing.JFrame {
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         new Dashboard().setVisible(true);
     }//GEN-LAST:event_formWindowClosed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        if (camposLlenos()) {
+            msg.Exito("OK");
+        }
+
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void cbHabDisponiblesFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cbHabDisponiblesFocusGained
+        if (!vld.validarCampo(txApePaterno)) {
+            txApePaterno.grabFocus();
+        } else {
+            if (!vld.validarCampo(txNombres)) {
+                txNombres.grabFocus();
+            } else {
+                if (!vld.validarFechas(dcEntrada.getDate(), dcSalida.getDate())) {
+                    if(dcEntrada == null){
+                        dcEntrada.grabFocus();
+                    }else{
+                        dcSalida.grabFocus();
+                    }
+                } else {
+                    if (!vld.validarCombo(cbTipoHab)) {
+                        cbTipoHab.grabFocus();
+                    }else{
+                        try {
+                            buscarHabsDisponibles();
+                        } catch (SQLException ex) {
+                            System.out.println("No se pueden buscar las habitaciones \n"+ex);
+                        }
+                    }
+                }
+            }
+        }
+    }//GEN-LAST:event_cbHabDisponiblesFocusGained
 
     /**
      * @param args the command line arguments
@@ -298,21 +395,17 @@ public class guiReservas extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(guiReservas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(guiReservas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(guiReservas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(guiReservas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
+        java.awt.EventQueue.invokeLater(() -> {
+            try {
                 new guiReservas().setVisible(true);
+            } catch (SQLException ex) {
+                System.out.println("No se puede cargar la ventana de Reservas \n" + ex);
             }
         });
     }
@@ -324,6 +417,7 @@ public class guiReservas extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> cbTipoHab;
     private com.toedter.calendar.JDateChooser dcEntrada;
     private com.toedter.calendar.JDateChooser dcSalida;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel38;
