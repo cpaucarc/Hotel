@@ -1,5 +1,7 @@
 package vistas;
 
+import componentes.Colores;
+import componentes.Fuentes;
 import java.awt.Dimension;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -9,7 +11,7 @@ import java.util.logging.Logger;
  *
  * @author Frank Paucar
  */
-public class Login extends javax.swing.JFrame {
+public class Login extends javax.swing.JFrame implements Colores, Fuentes {
 
     public Login() {
         initComponents();
@@ -39,37 +41,39 @@ public class Login extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(33, 29, 37));
+        jLabel1.setFont(FONT_TITLE_1);
+        jLabel1.setForeground(COLOR_TITLE_1);
         jLabel1.setText("Login");
         jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(625, 78, 200, 40));
 
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(142, 142, 147));
+        jLabel2.setFont(FONT_TITLE_3);
+        jLabel2.setForeground(COLOR_TITLE_3);
         jLabel2.setText("Nombre de usuario");
         jLabel2.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(625, 166, 200, 22));
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(142, 142, 147));
+        jLabel3.setFont(FONT_TITLE_3);
+        jLabel3.setForeground(COLOR_TITLE_3);
         jLabel3.setText("Contraseña");
         jLabel3.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(625, 229, 200, 22));
 
-        txUsuario.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        txUsuario.setForeground(new java.awt.Color(33, 29, 37));
+        txUsuario.setFont(FONT_COMPONENT_TEXT);
+        txUsuario.setForeground(COLOR_COMPONENT_TEXT);
         txUsuario.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txUsuario.setSelectionColor(COLOR_COMPONENT_SELECTION);
         jPanel1.add(txUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(625, 188, 200, 27));
 
-        txContr.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        txContr.setForeground(new java.awt.Color(33, 29, 37));
+        txContr.setFont(FONT_COMPONENT_TEXT);
+        txContr.setForeground(COLOR_COMPONENT_TEXT);
         txContr.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txContr.setToolTipText("");
+        txContr.setSelectionColor(COLOR_COMPONENT_SELECTION);
         jPanel1.add(txContr, new org.netbeans.lib.awtextra.AbsoluteConstraints(625, 251, 200, 27));
 
-        btIngresar.setBackground(new java.awt.Color(0, 122, 255));
-        btIngresar.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btIngresar.setForeground(new java.awt.Color(255, 255, 255));
+        btIngresar.setBackground(COLOR_BTN_PRIMARY_BG);
+        btIngresar.setFont(FONT_BTN_PRIMARY);
+        btIngresar.setForeground(COLOR_BTN_PRIMARY_FG);
         btIngresar.setText("Ingresar");
         btIngresar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btIngresar.addActionListener(new java.awt.event.ActionListener() {
@@ -77,7 +81,7 @@ public class Login extends javax.swing.JFrame {
                 btIngresarActionPerformed(evt);
             }
         });
-        jPanel1.add(btIngresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(625, 298, 200, 30));
+        jPanel1.add(btIngresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(625, 298, 200, 35));
 
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/public/imagenes/Login_img.png"))); // NOI18N

@@ -5,17 +5,18 @@ import Component.Tables;
 import Component.TextField;
 import Conexion.Control;
 import Database.Controller;
+import componentes.Colores;
+import componentes.Fuentes;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 import componentes.Mensajes;
 import componentes.Validador;
 
 /**
  * @author Frank Paucar
  */
-public class guiEmpleados extends javax.swing.JFrame {
+public class guiEmpleados extends javax.swing.JFrame implements Colores, Fuentes{
 
     private int idEmpleado = 0;
     Controller control = Control.getControl();
@@ -218,7 +219,6 @@ public class guiEmpleados extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         txDni = new javax.swing.JTextField();
-        jLabel7 = new javax.swing.JLabel();
         txApePaterno = new javax.swing.JTextField();
         txApeMaterno = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
@@ -284,34 +284,34 @@ public class guiEmpleados extends javax.swing.JFrame {
         jPanel1.setPreferredSize(new java.awt.Dimension(380, 650));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(75, 88, 118));
+        jLabel2.setFont(FONT_TITLE_1);
+        jLabel2.setForeground(COLOR_TITLE_1);
         jLabel2.setText("Empleados");
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 25, -1, 35));
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(75, 88, 118));
+        jLabel3.setFont(FONT_TITLE_2);
+        jLabel3.setForeground(COLOR_TITLE_2);
         jLabel3.setText("Datos personales");
         jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 90, 290, 20));
 
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(75, 88, 118));
+        jLabel4.setFont(FONT_TITLE_2);
+        jLabel4.setForeground(COLOR_TITLE_2);
         jLabel4.setText("Datos del empleo");
         jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 490, -1, 20));
 
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(75, 88, 118));
+        jLabel5.setFont(FONT_TITLE_2);
+        jLabel5.setForeground(COLOR_TITLE_2);
         jLabel5.setText("Datos de contacto");
         jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 330, -1, 20));
 
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(75, 88, 118));
+        jLabel6.setFont(FONT_TITLE_3);
+        jLabel6.setForeground(COLOR_TITLE_3);
         jLabel6.setText("DNI");
         jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 120, -1, 20));
 
-        txDni.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        txDni.setForeground(new java.awt.Color(75, 88, 118));
-        txDni.setSelectionColor(new java.awt.Color(0, 122, 255));
+        txDni.setFont(FONT_COMPONENT_TEXT);
+        txDni.setForeground(COLOR_COMPONENT_TEXT);
+        txDni.setSelectionColor(COLOR_COMPONENT_SELECTION);
         txDni.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txDniKeyTyped(evt);
@@ -319,14 +319,9 @@ public class guiEmpleados extends javax.swing.JFrame {
         });
         jPanel1.add(txDni, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 140, 100, 25));
 
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(75, 88, 118));
-        jLabel7.setText("Apellidos");
-        jPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 180, -1, 20));
-
-        txApePaterno.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        txApePaterno.setForeground(new java.awt.Color(75, 88, 118));
-        txApePaterno.setSelectionColor(new java.awt.Color(0, 122, 255));
+        txApePaterno.setFont(FONT_COMPONENT_TEXT);
+        txApePaterno.setForeground(COLOR_COMPONENT_TEXT);
+        txApePaterno.setSelectionColor(COLOR_COMPONENT_SELECTION);
         txApePaterno.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txApePaternoKeyTyped(evt);
@@ -334,9 +329,9 @@ public class guiEmpleados extends javax.swing.JFrame {
         });
         jPanel1.add(txApePaterno, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 220, 125, 25));
 
-        txApeMaterno.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        txApeMaterno.setForeground(new java.awt.Color(75, 88, 118));
-        txApeMaterno.setSelectionColor(new java.awt.Color(0, 122, 255));
+        txApeMaterno.setFont(FONT_COMPONENT_TEXT);
+        txApeMaterno.setForeground(COLOR_COMPONENT_TEXT);
+        txApeMaterno.setSelectionColor(COLOR_COMPONENT_SELECTION);
         txApeMaterno.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txApeMaternoKeyTyped(evt);
@@ -344,14 +339,14 @@ public class guiEmpleados extends javax.swing.JFrame {
         });
         jPanel1.add(txApeMaterno, new org.netbeans.lib.awtextra.AbsoluteConstraints(205, 220, 125, 25));
 
-        jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(75, 88, 118));
+        jLabel8.setFont(FONT_TITLE_3);
+        jLabel8.setForeground(COLOR_TITLE_3);
         jLabel8.setText("Nombres");
         jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 260, -1, 20));
 
-        txNombres.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        txNombres.setForeground(new java.awt.Color(75, 88, 118));
-        txNombres.setSelectionColor(new java.awt.Color(0, 122, 255));
+        txNombres.setFont(FONT_COMPONENT_TEXT);
+        txNombres.setForeground(COLOR_COMPONENT_TEXT);
+        txNombres.setSelectionColor(COLOR_COMPONENT_SELECTION);
         txNombres.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txNombresKeyTyped(evt);
@@ -359,19 +354,19 @@ public class guiEmpleados extends javax.swing.JFrame {
         });
         jPanel1.add(txNombres, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 280, 270, 25));
 
-        jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
-        jLabel9.setForeground(new java.awt.Color(75, 88, 118));
+        jLabel9.setFont(FONT_TITLE_3);
+        jLabel9.setForeground(COLOR_TITLE_3);
         jLabel9.setText("Telefono");
         jPanel1.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 360, -1, 20));
 
-        jLabel11.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
-        jLabel11.setForeground(new java.awt.Color(75, 88, 118));
+        jLabel11.setFont(FONT_TITLE_3);
+        jLabel11.setForeground(COLOR_TITLE_3);
         jLabel11.setText("Correo Electronico");
         jPanel1.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 420, -1, 20));
 
-        txTelefono.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        txTelefono.setForeground(new java.awt.Color(75, 88, 118));
-        txTelefono.setSelectionColor(new java.awt.Color(0, 122, 255));
+        txTelefono.setFont(FONT_COMPONENT_TEXT);
+        txTelefono.setForeground(COLOR_COMPONENT_TEXT);
+        txTelefono.setSelectionColor(COLOR_COMPONENT_SELECTION);
         txTelefono.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txTelefonoKeyTyped(evt);
@@ -379,24 +374,24 @@ public class guiEmpleados extends javax.swing.JFrame {
         });
         jPanel1.add(txTelefono, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 380, 125, 25));
 
-        txCorreo.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        txCorreo.setForeground(new java.awt.Color(75, 88, 118));
-        txCorreo.setSelectionColor(new java.awt.Color(0, 122, 255));
+        txCorreo.setFont(FONT_COMPONENT_TEXT);
+        txCorreo.setForeground(COLOR_COMPONENT_TEXT);
+        txCorreo.setSelectionColor(COLOR_COMPONENT_SELECTION);
         jPanel1.add(txCorreo, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 440, 270, 25));
 
-        jLabel12.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
-        jLabel12.setForeground(new java.awt.Color(75, 88, 118));
+        jLabel12.setFont(FONT_TITLE_3);
+        jLabel12.setForeground(COLOR_TITLE_3);
         jLabel12.setText("Cargo");
         jPanel1.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 520, -1, 20));
 
-        cbCargo.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        cbCargo.setForeground(new java.awt.Color(75, 88, 118));
+        cbCargo.setFont(FONT_COMPONENT_TEXT);
+        cbCargo.setForeground(COLOR_COMPONENT_TEXT);
         cbCargo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jPanel1.add(cbCargo, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 540, 270, 25));
 
-        btRegistrar.setBackground(new java.awt.Color(0, 120, 255));
-        btRegistrar.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        btRegistrar.setForeground(new java.awt.Color(255, 255, 255));
+        btRegistrar.setBackground(COLOR_BTN_PRIMARY_BG);
+        btRegistrar.setFont(FONT_BTN_PRIMARY);
+        btRegistrar.setForeground(COLOR_BTN_PRIMARY_FG);
         btRegistrar.setText("Registrar Empleado");
         btRegistrar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btRegistrar.addActionListener(new java.awt.event.ActionListener() {
@@ -406,13 +401,13 @@ public class guiEmpleados extends javax.swing.JFrame {
         });
         jPanel1.add(btRegistrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(169, 600, 160, 35));
 
-        jLabel28.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        jLabel28.setForeground(new java.awt.Color(75, 88, 118));
+        jLabel28.setFont(FONT_TITLE_3);
+        jLabel28.setForeground(COLOR_TITLE_3);
         jLabel28.setText("Apellido Paterno");
         jPanel1.add(jLabel28, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 200, 120, 20));
 
-        jLabel37.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        jLabel37.setForeground(new java.awt.Color(75, 88, 118));
+        jLabel37.setFont(FONT_TITLE_3);
+        jLabel37.setForeground(COLOR_TITLE_3);
         jLabel37.setText("Apellido Materno");
         jPanel1.add(jLabel37, new org.netbeans.lib.awtextra.AbsoluteConstraints(205, 200, 120, 20));
 
@@ -421,14 +416,19 @@ public class guiEmpleados extends javax.swing.JFrame {
         getContentPane().add(jScrollPane1, java.awt.BorderLayout.WEST);
 
         jTabbedPane1.setBackground(new java.awt.Color(255, 255, 255));
+        jTabbedPane1.setForeground(new java.awt.Color(31, 26, 46));
+        jTabbedPane1.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
 
+        jLabel1.setFont(FONT_TITLE_3);
+        jLabel1.setForeground(COLOR_TITLE_3);
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/public/imagenes/iconos/ic_buscar.png"))); // NOI18N
         jLabel1.setText("Buscar");
 
-        txBuscarActivo.setForeground(new java.awt.Color(75, 88, 118));
-        txBuscarActivo.setSelectionColor(new java.awt.Color(0, 122, 255));
+        txBuscarActivo.setFont(FONT_COMPONENT_TEXT);
+        txBuscarActivo.setForeground(COLOR_COMPONENT_TEXT);
+        txBuscarActivo.setSelectionColor(COLOR_COMPONENT_SELECTION);
         txBuscarActivo.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txBuscarActivoKeyTyped(evt);
@@ -476,7 +476,7 @@ public class guiEmpleados extends javax.swing.JFrame {
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txBuscarActivo, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 534, Short.MAX_VALUE)
                 .addGap(25, 25, 25))
         );
 
@@ -484,11 +484,14 @@ public class guiEmpleados extends javax.swing.JFrame {
 
         jPanel4.setBackground(new java.awt.Color(255, 255, 255));
 
+        jLabel10.setFont(FONT_TITLE_3);
+        jLabel10.setForeground(COLOR_TITLE_3);
         jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/public/imagenes/iconos/ic_buscar.png"))); // NOI18N
         jLabel10.setText("Buscar");
 
-        txBuscarDespedido.setForeground(new java.awt.Color(75, 88, 118));
-        txBuscarDespedido.setSelectionColor(new java.awt.Color(0, 122, 255));
+        txBuscarDespedido.setFont(FONT_COMPONENT_TEXT);
+        txBuscarDespedido.setForeground(COLOR_COMPONENT_TEXT);
+        txBuscarDespedido.setSelectionColor(COLOR_COMPONENT_SELECTION);
         txBuscarDespedido.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txBuscarDespedidoKeyTyped(evt);
@@ -536,7 +539,7 @@ public class guiEmpleados extends javax.swing.JFrame {
                     .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txBuscarDespedido, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 534, Short.MAX_VALUE)
                 .addGap(25, 25, 25))
         );
 
@@ -705,7 +708,6 @@ public class guiEmpleados extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;

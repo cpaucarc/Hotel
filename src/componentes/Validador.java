@@ -2,11 +2,16 @@ package componentes;
 
 import java.util.Date;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 public class Validador {
     
     public boolean validarCampo(JTextField campo){
+        return !campo.getText().isEmpty();
+    }
+    
+    public boolean validarLabel(JLabel campo){
         return !campo.getText().isEmpty();
     }
     
